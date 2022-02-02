@@ -1,0 +1,72 @@
+<html>
+    <body>
+        <script>
+            const sampleTransactions = [
+                {
+                    id: 123,
+                    sourceAccount: 'my_account', 
+                    targetAccount: 'supermarket',
+                    amount: -14,
+                    category: 'groceries',
+                    time: '2018-03-04'
+                },
+                { 
+                    id: 125,
+                    sourceAccount: 'my_account',
+                    targetAccount: 'coffee_shop',
+                    amount: -30,
+                    category: 'eating_out',
+                    time: '2018-03-12'
+                },  
+                {
+                    id: 124,
+                    sourceAccount: 'my_account', 
+                    targetAccount: 'supermarket',
+                    amount: -3,
+                    category: 'groceries',
+                    time: '2018-03-15'
+                },
+                {
+                    id: 126,
+                    sourceAccount: 'my_account', 
+                    targetAccount: 'cinema',
+                    amount: -12,
+                    category: 'movies',
+                    time: '2018-05-15'
+                },
+            ];
+            function setEndDate(date) {
+                date = date ? new Date(date) : new Date();
+                
+                if (date.getUTCHours() <= 0){
+                    date.setDate(date.getDate() + 1);
+                    date.setHours(0);
+                    date.setMinutes(0);
+                }
+                
+                return Date.parse(date);
+            }
+            function getBalanceByCategoryInPeriod(transactions = [], category, start, end) {
+                start = Date.parse(start);
+                end = setEndDate(end); 
+                
+                const trans = transactions
+                    .map((transaction) => {
+                    const { id, sourceAccount, targetAccount, ...cleanTransaction } = transaction;
+                    return {
+                        ...cleanTransaction,
+                        time: Date.parse(cleanTransaction.time)
+                    };
+                    }).filter((transaction) =>
+                    !!end 
+                    ? (transaction.category === category && 
+                        (transaction.time >= start && transaction.time <= end))
+                    : (transaction.category === category && transaction.time >= start)
+                    ).reduce((totalBalance, transaction) => totalBalance + transaction.amount, 0);
+                
+                return trans;
+            }
+            document.body.innerHTML = getBalanceByCategoryInPeriod(sampleTransactions,"eating_out",new Date("2018-03-01"),new Date("2018-03-31"));
+        </script>
+    </body>
+</html>

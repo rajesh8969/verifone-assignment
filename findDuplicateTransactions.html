@@ -1,0 +1,20 @@
+<html>
+    <body>
+        <script>
+            function findDuplicateTransactions() {
+                const data = [{ id: 3, sourceAccount: 'A', targetAccount: 'B', amount: 100, category: 'eating_out', time: '2018-03-02T10:34:30.000Z' }, { id: 1, sourceAccount: 'A', targetAccount: 'B', amount: 100, category: 'eating_out', time: '2018-03-02T10:33:00.000Z' }, { id: 6, sourceAccount: 'A', targetAccount: 'C', amount: 250, category: 'other', time: '2018-03-02T10:33:05.000Z' }, { id: 4, sourceAccount: 'A', targetAccount: 'B', amount: 100, category: 'eating_out', time: '2018-03-02T10:36:00.000Z' }, { id: 2, sourceAccount: 'A', targetAccount: 'B', amount: 100, category: 'eating_out', time: '2018-03-02T10:33:50.000Z' }, { id: 5, sourceAccount: 'A', targetAccount: 'C', amount: 250, category: 'other', time: '2018-03-02T10:33:00.000Z' }] 
+                const sort = arr => arr.sort((prev,next) =>`${prev.id}${prev.time}`.localeCompare(`${next.id}${next.time}`))
+                const getTime = obj => new Date(obj.time).getTime()
+                const isDub = (arr, obj) => arr.length ? Math.abs(getTime(arr[arr.length-1]) - getTime(obj))/1000 > 60 : false
+
+                const result = Object.values(sort(data).reduce((r, c) => {
+                let key = [c.sourceAccount, c.targetAccount].join('-')
+                r[key] = isDub(r[key] || [], c) ? r[key] : [...r[key] || [], c]
+                return r
+                }, {}))
+                return JSON.stringify(result);
+            }
+            document.body.innerHTML = findDuplicateTransactions();
+        </script>
+    </body>
+</html>
